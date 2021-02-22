@@ -7,7 +7,7 @@ from csv_board_convert import convert_board
 
 # 30 for 6 x 5, 42 for 7 x 6
 board = 30
-count = 700
+count = 5000
 
 with open("../data/data.csv", "a") as csv:
     for i in range(0, count):
@@ -22,7 +22,7 @@ with open("../data/data.csv", "a") as csv:
 
         for j in range(0, board):
             orb = choice(ORBS)
-            new_board += "{}{}".format(orb, ", " if j < board - 1 else "")
+            new_board += "{}{}".format(orb, "," if j < board - 1 else "")
         # print(convert_board(new_board))
         csv.write(new_board + "\n")
     csv.close()

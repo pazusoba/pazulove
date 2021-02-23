@@ -1,5 +1,5 @@
 """
-Generate headers for csv files
+Generate the header for csv
 """
 
 count = 30

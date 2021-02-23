@@ -1,4 +1,4 @@
-# Puzzle & Dragons AI
+# パズ愛❤️
 This is a side project for [pazusoba](https://github.com/HenryQuan/pazusoba). The goal is to improve the accuracy and performance of pazusoba with the power of magic. 
 
 ## Max score in 10 steps

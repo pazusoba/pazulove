@@ -96,7 +96,7 @@ class Pazusoba:
     count = 0
     board_size = 0
     number = 0
-    xxxxx = 0
+    number_of_recursion = 0
 
     def __init__(self, board_size, count, number):
         self.board_size = board_size
@@ -129,20 +129,22 @@ class Pazusoba:
                 
                 orb_list = self._convert_board_to_list(new_board)
                 # self._print_with_process("No.{} - {}\nPrev - {}, Curr - {}".format(i, self._pretty_board(new_board), prev_location.get_index(), curr_location.get_index()))
-                self._look_ahead(orb_list, prev_location, curr_location)
-                csv.write("{},{},{},{}\n".format(new_board, prev_location.get_index(), curr_location.get_index(), self.xxxxx))
-                self.xxxxx = 0
+                best_score = self._look_ahead(orb_list, prev_location, curr_location)
+
+                csv.write("{},{},{},{}\n".format(new_board, prev_location.get_index(), curr_location.get_index(), best_score))
+                self.number_of_recursion = 0
 
     def _convert_board_to_list(self, board):
         return [int(x) for x in board.replace(" ", "").split(",")]
 
     def _look_ahead(self, board, prev, curr, step=10):
-        if step == 0:
+        self.number_of_recursion += 1
+        if step < 0:
+            # we need to calculate the score
             return
 
-        self.xxxxx += 1
         # move around
-        for i in range(0, 3):
+        for i in range(0, 4):
             next_loc = curr.move(i)
             
             # prevent invalid moves and going backward

@@ -8,7 +8,7 @@ from pazusoba import Pazusoba
 import traceback, os
 
 cpu_count = os.cpu_count()
-data_count = int(ceil(300 / cpu_count))
+data_count = int(ceil(5000 / cpu_count))
 
 def generate_data(process_number):
     try:

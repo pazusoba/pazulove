@@ -14,7 +14,7 @@ class Location:
 
     index = 0
     board_size = 0
-    location = (0, 0)
+    location = [0, 0]
 
     def __init__(self, index, board_size):
         self.index = index
@@ -23,22 +23,60 @@ class Location:
 
     def get_random_previous_location(self):
         """
-        move up, down, left or right one step
+        move up, down, left or right one step. 4% chance to be -1 which means this is the first move
         """
-        return Location(0, self.board_size)
 
-    def index(self):
-        return self._convert_to_index(self.index)
+        new_location = Location(-1, self.board_size)
+        if randint(0, 99) < 4:
+            return new_location
+        else:
+            d = list(range(0, 4))
+            while len(d) > 0:
+                pick = choice(d)
+                d.remove(pick)
+
+                new_location = self._move(pick)
+                if new_location != None:
+                    break
+            return new_location
+
+    def get_index(self):
+        return self.index
+
+    def _move(self, number):
+        """
+        move based on the number
+        0 - up
+        1 - down
+        2 - left
+        3 - right
+        """
+
+        [x, y] = self.location[:]
+        if number == 0:
+            x -= 1
+        elif number == 1:
+            x += 1
+        elif number == 2:
+            y -= 1
+        elif number == 3:
+            y += 1
+
+        # check if the new location is valid
+        if x >= 0 and x < self._get_row() and y >= 0 and y < self._get_column():
+            return Location(self._convert_to_index([x, y]), self.board_size)
+        return None
 
     def _get_location(self):
-        # 11 / 5 - 1 = 1
-        first = int(self.index / self._get_row()) - 1
+        column = self._get_column()
+        # 11 / 5 = 2
+        first = int(self.index / column)
         # 11 - 1 * 6 = 5
-        second = self.index - first * self._get_column()
-        return (first, second)
+        second = self.index % column
+        return [first, second]
 
     def _convert_to_index(self, location):
-        (first, second) = location
+        [first, second] = location
         # 1 * 6 + 5 = 11
         return first * self._get_column() + second
 
@@ -69,38 +107,42 @@ class Pazusoba:
         generate a new board and look ten steps ahead
         """
 
-        for i in range(0, self.count):
-            new_board = ""
-            orbs = list(range(1, 7))
+        with open("temp.txt", "a") as csv:
+            for i in range(0, self.count):
+                new_board = ""
+                orbs = list(range(1, 7))
 
-            # 50% chance to get a board with less orbs
-            if randint(0, 1) == 0:
-                number_of_orbs = randint(2, 5)
-                while len(orbs) > number_of_orbs:
-                    orbs.remove(choice(orbs))
+                # 50% chance to get a board with less orbs
+                if randint(0, 1) == 0:
+                    number_of_orbs = randint(2, 5)
+                    while len(orbs) > number_of_orbs:
+                        orbs.remove(choice(orbs))
 
-            for j in range(0, self.board_size):
-                orb = choice(orbs)
-                new_board += "{}{}".format(orb, "," if j < self.board_size - 1 else "")
-            
-            # pick random locations
-            curr_location = Location(randint(0, self.board_size - 1), self.board_size)
-            # 4% chance to be -1 which means this is the first move
-            if randint(0, 99) < 4:
-                prev_location = Location(-1, self.board_size)
-            else:
+                for j in range(0, self.board_size):
+                    orb = choice(orbs)
+                    new_board += "{}{}".format(orb, "," if j < self.board_size - 1 else "")
+                
+                # pick random locations
+                curr_location = Location(randint(0, self.board_size - 1), self.board_size)
                 prev_location = curr_location.get_random_previous_location()
-
-            print(prev_location.index())
-            # debug only 
-            self._convert_board_to_list(new_board)
-            self._print_with_process("No.{} - {}\nPrev - {}, Curr - {}".format(i, self._pretty_board(new_board), prev_location, curr_location))
+                
+                # debug only 
+                self._convert_board_to_list(new_board)
+                # self._print_with_process("No.{} - {}\nPrev - {}, Curr - {}".format(i, self._pretty_board(new_board), prev_location.get_index(), curr_location.get_index()))
+                self._look_ahead(new_board, prev_location, curr_location, step=2)
+                csv.write("{},{},{},0\n".format(new_board, prev_location.get_index(), curr_location.get_index()))
 
     def _convert_board_to_list(self, board):
         return [int(x) for x in board.replace(" ", "").split(",")]
 
     def _look_ahead(self, board, prev, curr, step=10):
-        print(step)
+        pass
+
+    def _swap(self, board, curr_loc, next_loc):
+        # copy the board, swap two location
+        new_board = board[:]
+        new_board[curr_loc.get_index()], new_board[next_loc.get_index()] = new_board[next_loc.get_index()], new_board[curr_loc.get_index()]
+        return new_board
 
     def _pretty_board(self, board):
         """

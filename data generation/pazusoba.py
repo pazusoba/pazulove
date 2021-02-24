@@ -14,7 +14,7 @@ class Location:
 
     index = 0
     board_size = 0
-    location = [0, 0]
+    location = (0, 0)
 
     def __init__(self, index, board_size):
         self.index = index
@@ -35,7 +35,7 @@ class Location:
                 pick = choice(d)
                 d.remove(pick)
 
-                new_location = self._move(pick)
+                new_location = self.move(pick)
                 if new_location != None:
                     break
             return new_location
@@ -43,7 +43,7 @@ class Location:
     def get_index(self):
         return self.index
 
-    def _move(self, number):
+    def move(self, number):
         """
         move based on the number
         0 - up
@@ -52,7 +52,7 @@ class Location:
         3 - right
         """
 
-        [x, y] = self.location[:]
+        (x, y) = self.location
         if number == 0:
             x -= 1
         elif number == 1:
@@ -64,7 +64,7 @@ class Location:
 
         # check if the new location is valid
         if x >= 0 and x < self._get_row() and y >= 0 and y < self._get_column():
-            return Location(self._convert_to_index([x, y]), self.board_size)
+            return Location(self._convert_to_index((x, y)), self.board_size)
         return None
 
     def _get_location(self):
@@ -76,7 +76,7 @@ class Location:
         return [first, second]
 
     def _convert_to_index(self, location):
-        [first, second] = location
+        (first, second) = location
         # 1 * 6 + 5 = 11
         return first * self._get_column() + second
 
@@ -96,6 +96,7 @@ class Pazusoba:
     count = 0
     board_size = 0
     number = 0
+    xxxxx = 0
 
     def __init__(self, board_size, count, number):
         self.board_size = board_size
@@ -126,22 +127,36 @@ class Pazusoba:
                 curr_location = Location(randint(0, self.board_size - 1), self.board_size)
                 prev_location = curr_location.get_random_previous_location()
                 
-                # debug only 
-                self._convert_board_to_list(new_board)
+                orb_list = self._convert_board_to_list(new_board)
                 # self._print_with_process("No.{} - {}\nPrev - {}, Curr - {}".format(i, self._pretty_board(new_board), prev_location.get_index(), curr_location.get_index()))
-                self._look_ahead(new_board, prev_location, curr_location, step=2)
-                csv.write("{},{},{},0\n".format(new_board, prev_location.get_index(), curr_location.get_index()))
+                self._look_ahead(orb_list, prev_location, curr_location)
+                csv.write("{},{},{},{}\n".format(new_board, prev_location.get_index(), curr_location.get_index(), self.xxxxx))
+                self.xxxxx = 0
 
     def _convert_board_to_list(self, board):
         return [int(x) for x in board.replace(" ", "").split(",")]
 
     def _look_ahead(self, board, prev, curr, step=10):
-        pass
+        if step == 0:
+            return
 
-    def _swap(self, board, curr_loc, next_loc):
+        self.xxxxx += 1
+        # move around
+        for i in range(0, 3):
+            next_loc = curr.move(i)
+            
+            # prevent invalid moves and going backward
+            if next_loc == None or next_loc.get_index() == prev.get_index():
+                continue
+
+            # swap board and go deeper
+            new_board = self._swap(board, curr, next_loc)
+            self._look_ahead(new_board, curr, next_loc, step - 1)
+
+    def _swap(self, board, first, second):
         # copy the board, swap two location
         new_board = board[:]
-        new_board[curr_loc.get_index()], new_board[next_loc.get_index()] = new_board[next_loc.get_index()], new_board[curr_loc.get_index()]
+        new_board[first.get_index()], new_board[second.get_index()] = new_board[second.get_index()], new_board[first.get_index()]
         return new_board
 
     def _pretty_board(self, board):

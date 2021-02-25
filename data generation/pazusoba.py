@@ -139,9 +139,10 @@ class Pazusoba:
 
     def _look_ahead(self, board, prev, curr, step=10):
         self.number_of_recursion += 1
+        score = 0
         if step < 0:
             # we need to calculate the score
-            return
+            return self._get_score(board)
 
         # move around
         for i in range(0, 4):
@@ -153,7 +154,16 @@ class Pazusoba:
 
             # swap board and go deeper
             new_board = self._swap(board, curr, next_loc)
-            self._look_ahead(new_board, curr, next_loc, step - 1)
+
+            # get the best score
+            new_score = self._look_ahead(new_board, curr, next_loc, step - 1)
+            if new_score > score:
+                score = new_score
+
+        return score
+
+    def _get_score(self, board):
+        return randint(100, 10000)
 
     def _swap(self, board, first, second):
         # copy the board, swap two location

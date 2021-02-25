@@ -191,8 +191,9 @@ class Pazusoba:
                         continue
 
                 new_score = self._erase_combo(board_2d, i, j)
-                more_combo = new_score > 0
                 score += new_score
+                if new_score > 0:
+                    more_combo = True
 
             if more_combo:
                 more_combo = self._move_orbs_down(board_2d)
@@ -308,7 +309,9 @@ class Pazusoba:
         """
         move orbs down and check if anything changed, copied from pazusoba, moveOrbsDown()
         """
-        row, column = len(board), len(board[0])
+
+        # this was before I updated column and row, so here it should be reverted
+        column, row = len(board), len(board[0])
         changed = False
 
         for j in range(row):

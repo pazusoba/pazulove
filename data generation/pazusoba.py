@@ -12,7 +12,6 @@ class Location:
     A wrapper for index to easily convert between index and location
     """
 
-
     index = 0
     board_size = 0
     location = (0, 0)
@@ -103,6 +102,7 @@ class Pazusoba:
     count = 0
     board_size = 0
     number = 0
+    min_erase = 3
 
     def __init__(self, board_size, count, number):
         self.board_size = board_size
@@ -173,14 +173,172 @@ class Pazusoba:
 
         board_2d = self._convert_to_2d(board)
         row, column = len(board_2d), len(board_2d[0])
+        score = 0
 
-        # start from bottom to top
-        for i in range(row - 1, -1, -1):
-            # from left to right
-            for j in range(0, column):
-                # check all connected orbs
-                pass
-        return randint(100, 10000)
+        # continue until no new combo found
+        more_combo = True
+        while more_combo:
+            more_combo = False
+
+            # start from bottom to top
+            for i in range(row - 1, -1, -1):
+                # from left to right
+                for j in range(0, column):
+                    curr_orb = board_2d[i][j]
+                    
+                    # ignore empty orbs
+                    if curr_orb == 0:
+                        continue
+
+                new_score = self._erase_combo(board_2d, i, j)
+                more_combo = new_score > 0
+                score += new_score
+
+            if more_combo:
+                more_combo = self._move_orbs_down(board_2d)
+                # more point for moving the board down
+                score += 50
+
+        return score
+
+    def _erase_combo(self, board, ox, oy):
+        """
+        the old implementation of eraseCombo() from pazusoba, slower but more accurate
+        """
+        toVisit = []
+        inserted = set()
+        toVisit.append((ox, oy))
+        # 0 - vertical, 1 - horizontal
+        visited = {}
+        row, column = len(board), len(board[0])
+
+        while len(toVisit) > 0:
+            curr_location = toVisit.pop(0)
+            
+            # visited location
+            mode = None
+            if curr_location in visited:
+                mode = visited[curr_location]
+                if mode[0] == mode[1] == True:
+                    continue
+            
+            (x, y) = curr_location
+            orb = board[x][y]
+
+            # check vertically
+            if mode == None or not mode[0]:
+                up, down = x - 1, x + 1
+                up_orb = down_orb = 0
+                
+                while up >= 0:
+                    if self._has_same_orb(board, orb, up, y):
+                        up_orb += 1
+                    else:
+                        break
+                    up -= 1
+
+                while down < column:
+                    if self._has_same_orb(board, orb, down, y):
+                        down_orb += 1
+                    else:
+                        break
+                    down += 1
+
+                if up_orb + down_orb + 1 >= self.min_erase:
+                    for i in range(x - up_orb, x + down_orb + 1):
+                        l = (i, y)
+                        inserted.add(l)
+                        toVisit.append(l)
+                        if l in visited:
+                            visited[l][0] = True
+                        else:
+                            visited[l] = [True, False]
+            
+            # check horizontally
+            if mode == None or not mode[1]:
+                left, right = y - 1, y + 1
+                left_orb = right_orb = 0
+                
+                while up >= 0:
+                    if self._has_same_orb(board, orb, x, left):
+                        left_orb += 1
+                    else:
+                        break
+                    left -= 1
+
+                while down < column:
+                    if self._has_same_orb(board, orb, x, right):
+                        right_orb += 1
+                    else:
+                        break
+                    right += 1
+
+                if left_orb + right_orb + 1 >= self.min_erase:
+                    for i in range(x - left_orb, x + right_orb + 1):
+                        l = (i, y)
+                        inserted.add(l)
+                        toVisit.append(l)
+                        if l in visited:
+                            visited[l][1] = True
+                        else:
+                            visited[l] = [False, True]
+
+            # done checking this
+            visited[curr_location] = [True, True]
+
+        combo_size = len(inserted)
+        has_combo = combo_size >= self.min_erase
+        score = 1000 if has_combo else 0
+        
+        if has_combo:
+            # erase all orbs
+            for l in inserted:
+                (x, y) = l
+                board[x][y] = 0
+
+        return score
+
+    def _has_same_orb(self, board, orb, x, y):
+        row, column = len(board), len(board[0])
+        if x >= 0 and x < column and y >= 0 and y < row:
+            return board[x][y] == orb
+        return False
+
+    def _move_orbs_down(self, board):
+        """
+        move orbs down and check if anything changed, copied from pazusoba, moveOrbsDown()
+        """
+        row, column = len(board), len(board[0])
+        changed = False
+
+        for j in range(row):
+            orbs = []
+            empty_count = 0
+
+            # start checking from the bottom
+            for i in range(column - 1, -1, -1):
+                orb = board[i][j]
+                if orb > 0:
+                    orbs.append(orb)
+                else:
+                    empty_count += 1
+
+            # check empty but not all empty
+            if empty_count > 0 and empty_count < column:
+                k, s = 0, len(orbs)
+                for i in range(column - 1, -1, -1):
+                    if k >= s:
+                        board[i][j] = 0
+                    else:
+                        orb = orbs[k]
+                        curr_orb = board[i][j]
+                        board[i][j] = orb
+                        if curr_orb != orb:
+                            changed = True
+                    i -= 1
+                    k += 1
+
+        return changed
 
     def _convert_to_2d(self, board):
         """

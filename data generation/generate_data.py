@@ -18,7 +18,7 @@ def generate_data(process_number):
     except Exception as ex:
         # notify via email when crashed
         command = 'message "Core {} crashed" "{}"'.format(process_number, ex)
-        os.system(command)
+        # os.system(command)
         print(traceback.format_exc())
 
 if __name__ == '__main__':
@@ -39,4 +39,4 @@ if __name__ == '__main__':
     # notify via email when completed
     command = 'message "DATA GENERATION COMPLETED" "{} core(s), {} per core, took {}s"'.format(cpu_count, data_count, time.time() - start_time)
     print(command)
-    os.system(command)
+    # os.system(command)

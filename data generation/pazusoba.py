@@ -207,6 +207,7 @@ class Pazusoba:
         """
         the old implementation of eraseCombo() from pazusoba, slower but more accurate
         """
+
         toVisit = []
         inserted = set()
         toVisit.append((ox, oy))
@@ -239,7 +240,7 @@ class Pazusoba:
                     else:
                         break
 
-                while down < column:
+                while down < row:
                     down += 1
                     if self._has_same_orb(board, orb, down, y):
                         down_orb += 1
@@ -247,7 +248,7 @@ class Pazusoba:
                         break
 
                 if up_orb + down_orb + 1 >= self.min_erase:
-                    for i in range(x - up_orb, x + down_orb + 1):
+                    for i in range(x - up_orb - 1, x + down_orb):
                         l = (i, y)
                         inserted.add(l)
                         toVisit.append(l)
@@ -261,14 +262,14 @@ class Pazusoba:
                 left = right = y
                 left_orb = right_orb = 0
                 
-                while up >= 0:
+                while left >= 0:
                     left -= 1
                     if self._has_same_orb(board, orb, x, left):
                         left_orb += 1
                     else:
                         break
 
-                while down < column:
+                while right < column:
                     right += 1
                     if self._has_same_orb(board, orb, x, right):
                         right_orb += 1
@@ -276,7 +277,7 @@ class Pazusoba:
                         break
 
                 if left_orb + right_orb + 1 >= self.min_erase:
-                    for i in range(x - left_orb, x + right_orb + 1):
+                    for i in range(x - left_orb - 1, x + right_orb):
                         l = (i, y)
                         inserted.add(l)
                         toVisit.append(l)

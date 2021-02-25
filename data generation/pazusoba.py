@@ -311,15 +311,15 @@ class Pazusoba:
         """
 
         # this was before I updated column and row, so here it should be reverted
-        column, row = len(board), len(board[0])
+        row, column = len(board), len(board[0])
         changed = False
 
-        for j in range(row):
+        for i in range(row):
             orbs = []
             empty_count = 0
 
             # start checking from the bottom
-            for i in range(column - 1, -1, -1):
+            for j in range(column - 1, -1, -1):
                 orb = board[i][j]
                 if orb > 0:
                     orbs.append(orb)
@@ -329,7 +329,7 @@ class Pazusoba:
             # check empty but not all empty
             if empty_count > 0 and empty_count < column:
                 k, s = 0, len(orbs)
-                for i in range(column - 1, -1, -1):
+                for j in range(column - 1, -1, -1):
                     if k >= s:
                         board[i][j] = 0
                     else:
@@ -338,7 +338,7 @@ class Pazusoba:
                         board[i][j] = orb
                         if curr_orb != orb:
                             changed = True
-                    i -= 1
+                    j -= 1
                     k += 1
 
         return changed

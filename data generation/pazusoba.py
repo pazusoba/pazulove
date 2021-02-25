@@ -114,6 +114,7 @@ class Pazusoba:
         generate a new board and look ten steps ahead
         """
 
+        # with open("data/data.csv", "a") as csv:
         with open("temp.txt", "a") as csv:
             for i in range(0, self.count):
                 new_board = ""
@@ -190,10 +191,10 @@ class Pazusoba:
                     if curr_orb == 0:
                         continue
 
-                new_score = self._erase_combo(board_2d, i, j)
-                score += new_score
-                if new_score > 0:
-                    more_combo = True
+                    new_score = self._erase_combo(board_2d, i, j)
+                    score += new_score
+                    if new_score > 0:
+                        more_combo = True
 
             if more_combo:
                 more_combo = self._move_orbs_down(board_2d)
@@ -228,22 +229,22 @@ class Pazusoba:
 
             # check vertically
             if mode == None or not mode[0]:
-                up, down = x - 1, x + 1
+                up = down = x
                 up_orb = down_orb = 0
                 
                 while up >= 0:
+                    up -= 1
                     if self._has_same_orb(board, orb, up, y):
                         up_orb += 1
                     else:
                         break
-                    up -= 1
 
                 while down < column:
+                    down += 1
                     if self._has_same_orb(board, orb, down, y):
                         down_orb += 1
                     else:
                         break
-                    down += 1
 
                 if up_orb + down_orb + 1 >= self.min_erase:
                     for i in range(x - up_orb, x + down_orb + 1):
@@ -257,22 +258,22 @@ class Pazusoba:
             
             # check horizontally
             if mode == None or not mode[1]:
-                left, right = y - 1, y + 1
+                left = right = y
                 left_orb = right_orb = 0
                 
                 while up >= 0:
+                    left -= 1
                     if self._has_same_orb(board, orb, x, left):
                         left_orb += 1
                     else:
                         break
-                    left -= 1
 
                 while down < column:
+                    right += 1
                     if self._has_same_orb(board, orb, x, right):
                         right_orb += 1
                     else:
                         break
-                    right += 1
 
                 if left_orb + right_orb + 1 >= self.min_erase:
                     for i in range(x - left_orb, x + right_orb + 1):
@@ -300,10 +301,13 @@ class Pazusoba:
         return score
 
     def _has_same_orb(self, board, orb, x, y):
-        row, column = len(board), len(board[0])
-        if x >= 0 and x < column and y >= 0 and y < row:
+        if self._valid_Location(board, x, y):
             return board[x][y] == orb
         return False
+
+    def _valid_Location(self, board, x, y):
+        row, column = len(board), len(board[0])
+        return x >= 0 and x < row and y >= 0 and y < column
 
     def _move_orbs_down(self, board):
         """

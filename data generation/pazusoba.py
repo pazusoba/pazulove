@@ -1,16 +1,17 @@
 
 from random import choice, randint
 
+BOARD_INFO = {
+    20: [5, 4],
+    30: [6, 5],
+    42: [7, 6]
+}
+
 class Location:
     """
     A wrapper for index to easily convert between index and location
     """
 
-    BOARD_INFO = {
-        20: [5, 4],
-        30: [6, 5],
-        42: [7, 6]
-    }
 
     index = 0
     board_size = 0
@@ -63,12 +64,12 @@ class Location:
             y += 1
 
         # check if the new location is valid
-        if x >= 0 and x < self._get_row() and y >= 0 and y < self._get_column():
+        if x >= 0 and x < self.get_row() and y >= 0 and y < self.get_column():
             return Location(self._convert_to_index((x, y)), self.board_size)
         return None
 
     def _get_location(self):
-        column = self._get_column()
+        column = self.get_column()
         # 11 / 5 = 2
         first = int(self.index / column)
         # 11 - 1 * 6 = 5
@@ -78,25 +79,30 @@ class Location:
     def _convert_to_index(self, location):
         (first, second) = location
         # 1 * 6 + 5 = 11
-        return first * self._get_column() + second
+        return first * self.get_column() + second
 
-    def _get_row(self):
-        return self.BOARD_INFO[self.board_size][1]
+    def get_row(self):
+        """
+        row is from left to right, usually 5
+        """
+        return BOARD_INFO[self.board_size][1]
 
-    def _get_column(self):
-        return self.BOARD_INFO[self.board_size][0]
+    def get_column(self):
+        """
+        column is from top to bottom, usually 6
+        """
+        return BOARD_INFO[self.board_size][0]
 
 class Pazusoba:
     """
     A basic port of pazusoba specialised in looking certain steps ahead
     """
 
-    OUTPUT_TABLE = ["", "R", "B", "G", "L", "D", "H", "J", "P", "", "", "", ""]\
+    OUTPUT_TABLE = ["", "R", "B", "G", "L", "D", "H", "J", "P", "", "", "", ""]
 
     count = 0
     board_size = 0
     number = 0
-    number_of_recursion = 0
 
     def __init__(self, board_size, count, number):
         self.board_size = board_size
@@ -132,16 +138,14 @@ class Pazusoba:
                 best_score = self._look_ahead(orb_list, prev_location, curr_location)
 
                 csv.write("{},{},{},{}\n".format(new_board, prev_location.get_index(), curr_location.get_index(), best_score))
-                self.number_of_recursion = 0
 
     def _convert_board_to_list(self, board):
         return [int(x) for x in board.replace(" ", "").split(",")]
 
     def _look_ahead(self, board, prev, curr, step=10):
-        self.number_of_recursion += 1
         score = 0
         if step < 0:
-            # we need to calculate the score
+            # calculate the score of the board
             return self._get_score(board)
 
         # move around
@@ -163,7 +167,34 @@ class Pazusoba:
         return score
 
     def _get_score(self, board):
+        """
+        get the score of the curren board, accuracy is the top priority
+        """
+
+        board_2d = self._convert_to_2d(board)
+        row, column = len(board_2d), len(board_2d[0])
+
+        # start from bottom to top
+        for i in range(row - 1, -1, -1):
+            # from left to right
+            for j in range(0, column):
+                # check all connected orbs
+                pass
         return randint(100, 10000)
+
+    def _convert_to_2d(self, board):
+        """
+        convert a board to a 2d array
+        """
+
+        column, row = BOARD_INFO[self.board_size]
+        board_2d = []
+        for i in range(row):
+            board_row = []
+            for j in range(column):
+                board_row.append(board[j + i * column])
+            board_2d.append(board_row)
+        return board_2d
 
     def _swap(self, board, first, second):
         # copy the board, swap two location

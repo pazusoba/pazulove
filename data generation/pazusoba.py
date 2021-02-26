@@ -114,8 +114,8 @@ class Pazusoba:
         generate a new board and look ten steps ahead
         """
 
-        # with open("data/data.csv", "a") as csv:
-        with open("temp.txt", "a") as csv:
+        with open("data/data.csv", "a") as csv:
+        # with open("temp.txt", "a") as csv:
             for i in range(0, self.count):
                 new_board = ""
                 orbs = list(range(1, 7))

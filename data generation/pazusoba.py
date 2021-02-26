@@ -214,6 +214,7 @@ class Pazusoba:
         """
         flood fill, copied from pazusoba
         """
+
         if not self._valid_location(board, x, y):
             return
 
@@ -280,7 +281,7 @@ class Pazusoba:
 
                     loc = (cx, cy)
                     if not loc in visited:
-                        board[x][y] = 0
+                        board[cx][cy] = 0
                         combo_list.append(loc)
                         visited[loc] = 1
                     else:

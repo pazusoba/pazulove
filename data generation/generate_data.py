@@ -8,7 +8,7 @@ from pazusoba import Pazusoba
 import traceback, os, time
 
 cpu_count = os.cpu_count()
-data_count = int(ceil(6000 / cpu_count))
+data_count = int(ceil(8 / cpu_count))
 
 def generate_data(process_number):
     try:
@@ -36,7 +36,7 @@ if __name__ == '__main__':
     for p in processes:
         p.join()
 
-    # notify via email when completed
+    # notify via email when completed, only works on certain devices
     command = 'emailme "DATA GENERATION COMPLETED" "{} core(s), {} per core, took {}s"'.format(cpu_count, data_count, time.time() - start_time)
     print(command)
     os.system(command)

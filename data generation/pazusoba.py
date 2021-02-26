@@ -136,8 +136,8 @@ class Pazusoba:
                 
                 orb_list = self._convert_board_to_list(new_board)
                 # self._print_with_process("No.{} - {}\nPrev - {}, Curr - {}".format(i, self._pretty_board(new_board), prev_location.get_index(), curr_location.get_index()))
-                best_score = self._look_ahead(orb_list, prev_location, curr_location)
-
+                best_score, best_board = self._look_ahead(orb_list, prev_location, curr_location)
+                print(best_score, self._pretty_board(best_board))
                 csv.write("{},{},{},{}\n".format(new_board, prev_location.get_index(), curr_location.get_index(), best_score))
 
     def _convert_board_to_list(self, board):
@@ -145,6 +145,8 @@ class Pazusoba:
 
     def _look_ahead(self, board, prev, curr, step=10):
         score = 0
+        best_board = []
+
         if step < 0:
             # calculate the score of the board
             return self._get_score(board)
@@ -161,11 +163,12 @@ class Pazusoba:
             new_board = self._swap(board, curr, next_loc)
 
             # get the best score
-            new_score = self._look_ahead(new_board, curr, next_loc, step - 1)
+            new_score, new_board = self._look_ahead(new_board, curr, next_loc, step - 1)
             if new_score > score:
                 score = new_score
+                best_board = new_board
 
-        return score
+        return (score, best_board)
 
     def _get_score(self, board):
         """
@@ -175,7 +178,7 @@ class Pazusoba:
         board_2d = self._convert_to_2d(board)
         row, column = self._get_board_info(board_2d)
         score = 0
-        return score
+
         # continue until no new combo found
         more_combo = True
         while more_combo:
@@ -191,31 +194,122 @@ class Pazusoba:
                     if curr_orb == 0:
                         continue
 
-                    new_score = self._erase_combo(board_2d, i, j)
+                    combo_list = []
+                    self._erase_combo(board_2d, i, j, curr_orb, combo_list, {})
+                    new_score = 1000 if len(combo_list) >= self.min_erase else 0
                     score += new_score
+
                     if new_score > 0:
                         more_combo = True
 
             if more_combo:
                 more_combo = self._move_orbs_down(board_2d)
                 # more point for moving the board down
-                score += 50
+                if more_combo:
+                    score += 50
 
-        return score
+        return (score, board)
 
-    def _erase_combo(self, board, ox, oy):
+    def _erase_combo(self, board, x, y, orb, combo_list, visited):
         """
-        a new improved version of floodfill to erase combos
+        flood fill, copied from pazusoba
         """
+        if not self._valid_location(board, x, y):
+            return
 
-        return 0
+        curr_orb = board[x][y]
+        if curr_orb != orb and not (x, y) in visited:
+            return
+
+        count = -1
+        d_list = [0, 0, 0, 0]
+        # just put 3 for now
+        minConnection = 3
+        row, column = self._get_board_info(board)
+
+        for d in range(4):
+            loop = row
+            if d > 1:
+                loop = column
+
+            for i in range(1, loop):
+                cx, cy = x, y
+                if d == 0:
+                    cy += i
+                elif d == 1:
+                    cy -= i
+                elif d == 2:
+                    cx += i
+                elif d == 3:
+                    cx -= i
+
+                if not self._valid_location(board, cx, cy):
+                    break
+
+                if board[cx][cy] != orb and not (cx, cy) in visited:
+                    break
+                    
+                d_list[d] += 1
+                count += 1
+
+        if count >= minConnection:
+            start, end = 0, 2
+
+            h_count = d_list[0] + d_list[1] + 1
+            v_count = d_list[2] + d_list[3] + 1
+            horizontal = h_count >= minConnection
+            vertical = v_count >= minConnection
+
+            if h_count == 3 and v_count == 3:
+                horizontal = vertical = True
+            
+            if not horizontal:
+                start = 1
+            if not vertical:
+                end = 1
+
+            for d in range(start, end):
+                start_count = -(d_list[d * 2 + 1])
+                end_count = d_list[d * 2] + 1
+                for i in range(start_count, end_count):
+                    cx, cy = x, y
+                    if d == 0:
+                        cy += i
+                    elif d == 1:
+                        cx += i
+
+                    loc = (cx, cy)
+                    if not loc in visited:
+                        board[x][y] = 0
+                        combo_list.append(loc)
+                        visited[loc] = 1
+                    else:
+                        visited[loc] = 2
+
+            for d in range(start, end):
+                start_count = -(d_list[d * 2 + 1])
+                end_count = d_list[d * 2] + 1
+                for i in range(start_count, end_count):
+                    cx, cy = x, y
+                    if d == 0:
+                        cy += i
+                    elif d == 1:
+                        cx += i
+                    
+                    if (cx, cy) in visited and visited[(cx, cy)] < 2:
+                        if d == 0:
+                            self._erase_combo(board, cx + 1, cy, orb, combo_list, visited)
+                            self._erase_combo(board, cx - 1, cy, orb, combo_list, visited)
+                        else:
+                            self._erase_combo(board, cx, cy + 1, orb, combo_list, visited)
+                            self._erase_combo(board, cx, cy - 1, orb, combo_list, visited)
 
     def _has_same_orb(self, board, orb, x, y):
-        if self._valid_Location(board, x, y):
+        if self._valid_location(board, x, y):
             return board[x][y] == orb
         return False
 
-    def _valid_Location(self, board, x, y):
+    def _valid_location(self, board, x, y):
         row, column = self._get_board_info(board)
         return x >= 0 and x < row and y >= 0 and y < column
 
@@ -228,12 +322,12 @@ class Pazusoba:
         row, column = self._get_board_info(board)
         changed = False
 
-        for i in range(row):
+        for j in range(column):
             orbs = []
             empty_count = 0
 
             # start checking from the bottom
-            for j in range(column - 1, -1, -1):
+            for i in range(row - 1, -1, -1):
                 orb = board[i][j]
                 if orb > 0:
                     orbs.append(orb)
@@ -243,7 +337,7 @@ class Pazusoba:
             # check empty but not all empty
             if empty_count > 0 and empty_count < column:
                 k, s = 0, len(orbs)
-                for j in range(column - 1, -1, -1):
+                for i in range(row - 1, -1, -1):
                     if k >= s:
                         board[i][j] = 0
                     else:
@@ -252,7 +346,7 @@ class Pazusoba:
                         board[i][j] = orb
                         if curr_orb != orb:
                             changed = True
-                    j -= 1
+                    i -= 1
                     k += 1
 
         return changed
@@ -286,7 +380,7 @@ class Pazusoba:
         """
 
         output = ""
-        for num in self._convert_board_to_list(board):
+        for num in board:
             output += self.OUTPUT_TABLE[int(num)]
         return output
 

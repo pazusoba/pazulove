@@ -196,7 +196,7 @@ class Pazusoba:
 
                     combo_list = []
                     self._erase_combo(board_2d, i, j, curr_orb, combo_list, {})
-                    new_score = 1000 if len(combo_list) >= self.min_erase else 0
+                    new_score = 1000 if len(combo_list) > 0 else 0
                     score += new_score
 
                     if new_score > 0:
@@ -221,7 +221,7 @@ class Pazusoba:
         if curr_orb != orb and not (x, y) in visited:
             return
 
-        count = -1
+        count = 1
         d_list = [0, 0, 0, 0]
         # just put 3 for now
         minConnection = 3
@@ -296,7 +296,8 @@ class Pazusoba:
                     elif d == 1:
                         cx += i
                     
-                    if (cx, cy) in visited and visited[(cx, cy)] < 2:
+                    loc = (cx, cy)
+                    if loc in visited and visited[loc] < 2:
                         if d == 0:
                             self._erase_combo(board, cx + 1, cy, orb, combo_list, visited)
                             self._erase_combo(board, cx - 1, cy, orb, combo_list, visited)
@@ -335,7 +336,7 @@ class Pazusoba:
                     empty_count += 1
 
             # check empty but not all empty
-            if empty_count > 0 and empty_count < column:
+            if empty_count > 0 and empty_count < row:
                 k, s = 0, len(orbs)
                 for i in range(row - 1, -1, -1):
                     if k >= s:

@@ -137,7 +137,8 @@ class Pazusoba:
                 orb_list = self._convert_board_to_list(new_board)
                 # self._print_with_process("No.{} - {}\nPrev - {}, Curr - {}".format(i, self._pretty_board(new_board), prev_location.get_index(), curr_location.get_index()))
                 best_score, best_board = self._look_ahead(orb_list, prev_location, curr_location)
-                print(best_score, self._pretty_board(best_board))
+                # print out some info, how many percent
+                print("{}({}%) - {} {}".format(i + 1, round((i + 1)/ self.count * 100), best_score, self._pretty_board(best_board)))
                 csv.write("{},{},{},{}\n".format(new_board, prev_location.get_index(), curr_location.get_index(), best_score))
 
     def _convert_board_to_list(self, board):

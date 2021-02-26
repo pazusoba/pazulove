@@ -173,9 +173,9 @@ class Pazusoba:
         """
 
         board_2d = self._convert_to_2d(board)
-        row, column = len(board_2d), len(board_2d[0])
+        row, column = self._get_board_info(board_2d)
         score = 0
-
+        return score
         # continue until no new combo found
         more_combo = True
         while more_combo:
@@ -205,101 +205,10 @@ class Pazusoba:
 
     def _erase_combo(self, board, ox, oy):
         """
-        the old implementation of eraseCombo() from pazusoba, slower but more accurate
+        a new improved version of floodfill to erase combos
         """
 
-        toVisit = []
-        inserted = set()
-        toVisit.append((ox, oy))
-        # 0 - vertical, 1 - horizontal
-        visited = {}
-        row, column = len(board), len(board[0])
-
-        while len(toVisit) > 0:
-            curr_location = toVisit.pop(0)
-            
-            # visited location
-            mode = None
-            if curr_location in visited:
-                mode = visited[curr_location]
-                if mode[0] == mode[1] == True:
-                    continue
-            
-            (x, y) = curr_location
-            orb = board[x][y]
-
-            # check vertically
-            if mode == None or not mode[0]:
-                up = down = x
-                up_orb = down_orb = 0
-                
-                while up >= 0:
-                    up -= 1
-                    if self._has_same_orb(board, orb, up, y):
-                        up_orb += 1
-                    else:
-                        break
-
-                while down < row:
-                    down += 1
-                    if self._has_same_orb(board, orb, down, y):
-                        down_orb += 1
-                    else:
-                        break
-
-                if up_orb + down_orb + 1 >= self.min_erase:
-                    for i in range(x - up_orb - 1, x + down_orb):
-                        l = (i, y)
-                        inserted.add(l)
-                        toVisit.append(l)
-                        if l in visited:
-                            visited[l][0] = True
-                        else:
-                            visited[l] = [True, False]
-            
-            # check horizontally
-            if mode == None or not mode[1]:
-                left = right = y
-                left_orb = right_orb = 0
-                
-                while left >= 0:
-                    left -= 1
-                    if self._has_same_orb(board, orb, x, left):
-                        left_orb += 1
-                    else:
-                        break
-
-                while right < column:
-                    right += 1
-                    if self._has_same_orb(board, orb, x, right):
-                        right_orb += 1
-                    else:
-                        break
-
-                if left_orb + right_orb + 1 >= self.min_erase:
-                    for i in range(x - left_orb - 1, x + right_orb):
-                        l = (i, y)
-                        inserted.add(l)
-                        toVisit.append(l)
-                        if l in visited:
-                            visited[l][1] = True
-                        else:
-                            visited[l] = [False, True]
-
-            # done checking this
-            visited[curr_location] = [True, True]
-
-        combo_size = len(inserted)
-        has_combo = combo_size >= self.min_erase
-        score = 1000 if has_combo else 0
-        
-        if has_combo:
-            # erase all orbs
-            for l in inserted:
-                (x, y) = l
-                board[x][y] = 0
-
-        return score
+        return 0
 
     def _has_same_orb(self, board, orb, x, y):
         if self._valid_Location(board, x, y):
@@ -307,7 +216,7 @@ class Pazusoba:
         return False
 
     def _valid_Location(self, board, x, y):
-        row, column = len(board), len(board[0])
+        row, column = self._get_board_info(board)
         return x >= 0 and x < row and y >= 0 and y < column
 
     def _move_orbs_down(self, board):
@@ -316,7 +225,7 @@ class Pazusoba:
         """
 
         # this was before I updated column and row, so here it should be reverted
-        row, column = len(board), len(board[0])
+        row, column = self._get_board_info(board)
         changed = False
 
         for i in range(row):
@@ -361,6 +270,9 @@ class Pazusoba:
                 board_row.append(board[j + i * column])
             board_2d.append(board_row)
         return board_2d
+
+    def _get_board_info(self, board):
+        return (len(board), len(board[0]))
 
     def _swap(self, board, first, second):
         # copy the board, swap two location

@@ -17,8 +17,8 @@ def generate_data(process_number):
         soba.generate_new_data()
     except Exception as ex:
         # notify via email when crashed
-        command = 'message "Core {} crashed" "{}"'.format(process_number, ex)
-        # os.system(command)
+        command = 'emailme "Core {} crashed" "{}"'.format(process_number, ex)
+        os.system(command)
         print(traceback.format_exc())
 
 if __name__ == '__main__':
@@ -37,6 +37,6 @@ if __name__ == '__main__':
         p.join()
 
     # notify via email when completed
-    command = 'message "DATA GENERATION COMPLETED" "{} core(s), {} per core, took {}s"'.format(cpu_count, data_count, time.time() - start_time)
+    command = 'emailme "DATA GENERATION COMPLETED" "{} core(s), {} per core, took {}s"'.format(cpu_count, data_count, time.time() - start_time)
     print(command)
     os.system(command)

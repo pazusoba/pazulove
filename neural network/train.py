@@ -38,11 +38,11 @@ class PazuLove(nn.Module):
 
 board_size = 30
 
-num_epochs = 5
+num_epochs = 200
 learning_rate = 0.01
 
 # read data from csv, get input and output data
-csv_data = pd.read_csv("data/data_random.csv")
+csv_data = pd.read_csv("../data/data_random.csv")
 data_size = len(csv_data)
 train_index = int(data_size * 0.9)
 train_loader = DataLoader(csv_data.iloc[:train_index, :-1].values)
@@ -95,4 +95,4 @@ with torch.no_grad():
     print('Accuracy: {}%'.format(100 * correct / total))
 
 # Save the model checkpoint
-# torch.save(model.state_dict(), 'model.ckpt')
+torch.save(model.state_dict(), 'model.ckpt')

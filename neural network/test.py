@@ -25,7 +25,7 @@ with torch.no_grad():
         predicted, actual = prediction[0][0].item(), output.item()
         predicted_combo, actual_combo = int(predicted / 1000), int(actual / 1000)
 
-        print("Predicted - {}, Actual - {}".format(predicted, actual))
+        print("Predicted - {:.1f}, Actual - {}".format(predicted, actual))
 
         correct += 1 if predicted_combo == actual_combo else 0
         total += 1

@@ -20,6 +20,12 @@ train_output = tensor(csv_data.iloc[:, -1].values, dtype=torch.float)
 
 print("{} training data".format(len(train_output)))
 
+def PAZULoss(output, target):
+    # target / 1000 == output / 1000
+    # print(target - output)
+    loss = torch.mean((output / 1000 - target / 1000) ** 2)
+    return loss
+
 # setup the model
 model = PazuLove(board_size + 2, 16, 16, 1)
 criterion = nn.MSELoss()
@@ -35,7 +41,7 @@ for epoch in range(num_epochs):
         output = train_output[i]
 
         prediction = model(data.float())
-        loss = criterion(prediction, output)
+        loss = PAZULoss(prediction, output)
 
         optimizer.zero_grad()
         loss.backward()

@@ -8,7 +8,7 @@ model.load_state_dict(torch.load("model.ckpt"))
 model.eval()
 
 # csv_data = pd.read_csv("data/data_random.csv")
-csv_data = pd.read_csv("data/data_100.csv")
+csv_data = pd.read_csv("data/data_test.csv")
 
 test_loader = DataLoader(csv_data.iloc[:, :-1].values)
 test_output = torch.tensor(csv_data.iloc[:, -1].values, dtype=torch.float)

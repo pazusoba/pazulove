@@ -38,7 +38,7 @@ class PazuLove(nn.Module):
 
 board_size = 30
 
-num_epochs = 50
+num_epochs = 5
 learning_rate = 0.01
 
 # read data from csv, get input and output data
@@ -57,7 +57,7 @@ print("training: {}, testing: {}".format(len(train_output), len(test_output)))
 
 # setup the model
 model = PazuLove(board_size + 2, 16, 8, 1)
-criterion = nn.MSELoss()
+criterion = nn.L1Loss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)  
 
 # train the model
@@ -75,7 +75,7 @@ for epoch in range(num_epochs):
         optimizer.step()
         
         if (i + 1) % 10 == 0:
-            print ('Epoch [{} / {}], Step [{} / {}], Loss: {:.4f}'.format(epoch + 1, num_epochs, i + 1, total_step, loss.item()))
+            print ('Epoch [{} / {}], Step [{} / {}], Loss: {:.0f}'.format(epoch + 1, num_epochs, i + 1, total_step, loss.item()))
 
 # test the model
 with torch.no_grad():
@@ -95,4 +95,4 @@ with torch.no_grad():
     print('Accuracy: {}%'.format(100 * correct / total))
 
 # Save the model checkpoint
-torch.save(model.state_dict(), 'model.ckpt')
+# torch.save(model.state_dict(), 'model.ckpt')

@@ -20,16 +20,16 @@ class PazuLove(nn.Module):
         self.hidden2 = nn.Linear(hidden1_count, hidden2_count)
         self.output = nn.Linear(hidden2_count, output_count)
 
-        self.relu = nn.ReLU()
+        # self.relu = nn.ReLU()
         self.activation = nn.Sigmoid()
-        self.softmax = nn.Softmax(dim=1)
+        # self.softmax = nn.Softmax(dim=1)
 
     def forward(self, out):
         out = self.hidden1(out)
-        out = self.relu(out)
+        out = self.activation(out)
 
         out = self.hidden2(out)
-        out = self.relu(out)
+        out = self.activation(out)
 
         out = self.output(out)
         # out = self.softmax(out)

@@ -39,7 +39,7 @@ class PazuLove(nn.Module):
 board_size = 30
 
 num_epochs = 2
-learning_rate = 0.01
+learning_rate = 0.001
 
 # read data from csv, get input and output data
 csv_data = pd.read_csv("../data/data_random.csv")
@@ -51,16 +51,14 @@ train_output = tensor(csv_data.iloc[:train_index, -1].values, dtype=torch.float)
 # 1000 data for testing
 test_index = -(data_size - train_index)
 test_loader = DataLoader(csv_data.iloc[test_index:, :-1].values)
-for data in test_loader:
-    print(data)
 test_output = tensor(csv_data.iloc[test_index:, -1].values, dtype=torch.float)
 
 print("training: {}, testing: {}".format(len(train_output), len(test_output)))
 
 # setup the model
-model = PazuLove(board_size + 2, 16, 16, 1)
+model = PazuLove(board_size + 2, 16, 8, 1)
 criterion = nn.L1Loss()
-optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)  
+optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
 # train the model
 total_step = len(train_loader)
@@ -69,10 +67,8 @@ for epoch in range(num_epochs):
         output = train_output[i]
 
         prediction = model(data.float())
-        print(prediction)
         loss = criterion(prediction, output)
 
-        # backward and optimize
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
@@ -89,6 +85,7 @@ with torch.no_grad():
         output = test_output[i]
 
         prediction = model(data.float())
+        print(prediction)
         predicted = int(prediction[0][0].item() / 1000)
         actual = int(output.item() / 1000)
 

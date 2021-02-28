@@ -7,26 +7,30 @@ from torch.utils.data import DataLoader
 from pazulove import PazuLove
 from dataset import TrainDataset, SmallDataSet
 import torch
-import os, time, sys
+import os, sys
+import time
+import math
 
 start_time = time.time()
 board_size = 30
 
-num_epochs = 5000
-learning_rate = 0.00001
+num_epochs = 1000
+learning_rate = 0.001
 
 def PAZULoss(output, target):
-    # target / 1000 == output / 1000
-    # print(target - output)
     loss = torch.mean((output / 1000 - target / 1000) ** 2)
     return loss
 
 # setup the model
-model = PazuLove(board_size + 2, 16, 8, 1)
-traning_data = TrainDataset(0.1)
+model = PazuLove(board_size + 2, 20, 10, 1)
+traning_data = TrainDataset(0.005)
 train_loader = DataLoader(traning_data, shuffle=True)
-criterion = nn.MSELoss()
-optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9)
+criterion = nn.L1Loss()
+# optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9)
+optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
+
+# model.load_state_dict(torch.load("model.ckpt"))
+# model.eval()
 
 # train the model
 total_step = len(train_loader)
@@ -40,7 +44,7 @@ try:
 
         for i, (data, output) in enumerate(train_loader):
             prediction = model(data)
-            loss = PAZULoss(prediction, output)
+            loss = criterion(prediction, output)
 
             optimizer.zero_grad()
             loss.backward()

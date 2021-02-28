@@ -13,7 +13,7 @@ class BaseDataset(Dataset):
     def __getitem__(self, index):
         curr = self.data.iloc[index].values
         # convert to tensor and float type
-        return (torch.tensor(curr[:-1], dtype=float), torch.tensor(curr[-1], dtype=float))
+        return (torch.tensor(curr[:-1], dtype=torch.float), torch.tensor(curr[-1], dtype=torch.float))
 
     def __iter__(self):
         return self.iterator
@@ -40,9 +40,9 @@ class SmallDataSet(BaseDataset):
          super().__init__("data/data_small.csv")
 
 # test
-# train = SmallDataSet()
+# train = TestDataset()
 # (first, second) = train[0]
 # print(first, second)
 # print(len(train))
 # for i in train:
-#     print(i)
+#     pass

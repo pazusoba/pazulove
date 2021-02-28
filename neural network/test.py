@@ -1,13 +1,13 @@
 from pazulove import PazuLove
 from torch.utils.data import DataLoader
-from dataset import TestDataset
+from dataset import TestDataset, SmallDataSet
 import torch
 
 model = PazuLove(32, 16, 16, 1)
 model.load_state_dict(torch.load("model.ckpt"))
 model.eval()
 
-test_loader = DataLoader(TestDataset)
+test_loader = DataLoader(SmallDataSet())
 
 # test the model
 with torch.no_grad():

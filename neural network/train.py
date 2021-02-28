@@ -7,11 +7,13 @@ from torch.utils.data import DataLoader
 from pazulove import PazuLove
 from dataset import TrainDataset, SmallDataSet
 import torch
+import os, time
 
+start_time = time.time()
 board_size = 30
 
-num_epochs = 100
-learning_rate = 0.1
+num_epochs = 10000
+learning_rate = 0.0001
 
 def PAZULoss(output, target):
     # target / 1000 == output / 1000
@@ -21,7 +23,7 @@ def PAZULoss(output, target):
 
 # setup the model
 model = PazuLove(board_size + 2, 16, 16, 1)
-train_loader = DataLoader(SmallDataSet(), shuffle=True)
+train_loader = DataLoader(TrainDataset(), shuffle=True)
 criterion = nn.MSELoss()
 optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 
@@ -45,10 +47,15 @@ for epoch in range(num_epochs):
         total += 1
         correct += 1 if predicted == actual else 0
 
-        if (i + 1) % 1 == 0:
+        if (i + 1) % 1000 == 0:
             print ('Epoch [{} / {}], Step [{} / {}], Loss: {:.4f}, Accuracy: {:.2f}%'.format(epoch + 1, num_epochs, i + 1, total_step, loss.item(), 100 * correct / total))
             correct = 0
             total = 0
 
 # Save the model checkpoint
-# torch.save(model.state_dict(), 'model.ckpt')
+torch.save(model.state_dict(), 'model.ckpt')
+
+# notify via email when completed, only works on certain devices
+command = 'emailme "TRAINING COMPLETED" "took {}s"'.format(time.time() - start_time)
+print(command)
+os.system(command)

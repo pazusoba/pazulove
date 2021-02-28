@@ -4,7 +4,7 @@ import torch
 
 class BaseDataset(Dataset):
     def __init__(self, csv_file):
-        self.data = pd.read_csv(csv_file)
+        self.data = pd.read_csv("../{}".format(csv_file))
         self.iterator = iter(self[x] for x in range(len(self)))
 
     def __len__(self):

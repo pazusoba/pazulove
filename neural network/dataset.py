@@ -3,8 +3,13 @@ import pandas as pd
 import torch
 
 class BaseDataset(Dataset):
-    def __init__(self, csv_file):
-        self.data = pd.read_csv("../{}".format(csv_file))
+    def __init__(self, csv_file, max_size=0):
+        csv_data = pd.read_csv("../{}".format(csv_file))
+        if max_size <= 0:
+            # use everything
+            self.data = csv_data
+        else:
+            self.data = csv_data.sample(frac = max_size) 
         self.iterator = iter(self[x] for x in range(len(self)))
 
     def __len__(self):
@@ -22,8 +27,8 @@ class TrainDataset(BaseDataset):
     """
     loaded from data_random.csv
     """
-    def __init__(self):
-        super().__init__("data/data_random.csv")
+    def __init__(self, max_size=0):
+        super().__init__("data/data_random.csv", max_size)
 
 class TestDataset(BaseDataset):
     """

@@ -11,6 +11,7 @@ class PazuLove(nn.Module):
         # input, hidden1, hidden2 and output
         self.hidden1 = nn.Linear(input_count, hidden1_count)
         self.hidden2 = nn.Linear(hidden1_count, hidden2_count)
+        self.hidden3 = nn.Linear(hidden2_count, hidden2_count)
         self.output = nn.Linear(hidden2_count, output_count)
 
         self.relu = nn.ReLU()
@@ -20,6 +21,9 @@ class PazuLove(nn.Module):
         out = self.relu(out)
 
         out = self.hidden2(out)
+        out = self.relu(out)
+
+        out = self.hidden3(out)
         out = self.relu(out)
 
         out = self.output(out)

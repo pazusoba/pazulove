@@ -4,10 +4,10 @@ from dataset import TestDataset, SmallDataSet, TrainDataset
 import torch
 
 model = PazuLove(32, 20, 10, 1)
-model.load_state_dict(torch.load("model.ckpt"))
+model.load_state_dict(torch.load("model31.ckpt"))
 model.eval()
 
-test_loader = DataLoader(TestDataset())
+test_loader = DataLoader(TrainDataset())
 
 # test the model
 with torch.no_grad():

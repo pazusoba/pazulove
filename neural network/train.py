@@ -14,7 +14,7 @@ import math
 start_time = time.time()
 board_size = 30
 
-num_epochs = 1000
+num_epochs = 10000
 learning_rate = 0.001
 
 def PAZULoss(output, target):
@@ -23,18 +23,18 @@ def PAZULoss(output, target):
 
 # setup the model
 model = PazuLove(board_size + 2, 20, 10, 1)
-traning_data = TrainDataset(0.005)
+traning_data = TrainDataset()
 train_loader = DataLoader(traning_data, shuffle=True)
 criterion = nn.L1Loss()
-# optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9)
-optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
+optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9)
+# optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 
-# model.load_state_dict(torch.load("model.ckpt"))
-# model.eval()
+model.load_state_dict(torch.load("model31.ckpt"))
+model.eval()
 
 # train the model
 total_step = len(train_loader)
-batch_size = len(traning_data)
+batch_size = len(traning_data) / 10
 
 try:
     for epoch in range(num_epochs):
@@ -44,7 +44,7 @@ try:
 
         for i, (data, output) in enumerate(train_loader):
             prediction = model(data)
-            loss = criterion(prediction, output)
+            loss = PAZULoss(prediction, output)
 
             optimizer.zero_grad()
             loss.backward()
@@ -62,13 +62,14 @@ try:
                 correct = 0
                 total = 0
                 loss_total = 0
+
+                # Save the model checkpoint
+                torch.save(model.state_dict(), 'model.ckpt')
+
 except KeyboardInterrupt:
     print("Saving current model...")
     torch.save(model.state_dict(), 'model.ckpt')
     sys.exit(0)
-
-# Save the model checkpoint
-torch.save(model.state_dict(), 'model.ckpt')
 
 # test with the same data set
 with torch.no_grad():

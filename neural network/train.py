@@ -15,7 +15,7 @@ start_time = time.time()
 board_size = 30
 
 num_epochs = 10000
-learning_rate = 0.0001
+learning_rate = 0.00001
 weight_decey = 0.0001
 
 def PAZULoss(output, target):
@@ -24,14 +24,14 @@ def PAZULoss(output, target):
 
 # setup the model
 model = PazuLove(board_size + 2, 16, 8, 1)
-traning_data = TrainDataset(0.1)
+traning_data = TrainDataset(0.5)
 train_loader = DataLoader(traning_data, shuffle=True)
 criterion = nn.L1Loss()
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.2)
 # optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=weight_decey)
 
-# model.load_state_dict(torch.load("model.ckpt"))
-# model.eval()
+model.load_state_dict(torch.load("model.ckpt"))
+model.eval()
 
 # train the model
 total_step = len(train_loader)

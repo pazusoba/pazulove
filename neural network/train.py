@@ -14,8 +14,7 @@ import time
 start_time = time.time()
 board_size = 30
 
-num_epochs = 10000
-learning_rate = 0.00001
+learning_rate = 0.000001
 weight_decey = 0.0001
 
 def PAZULoss(output, target):
@@ -24,7 +23,8 @@ def PAZULoss(output, target):
 
 # setup the model
 model = PazuLove(board_size + 2, 16, 8, 1)
-traning_data = TrainDataset(0.5)
+data_percentage = 0.01
+traning_data = TrainDataset(data_percentage)
 train_loader = DataLoader(traning_data, shuffle=True)
 criterion = nn.L1Loss()
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.2)
@@ -35,10 +35,13 @@ model.eval()
 
 # train the model
 total_step = len(train_loader)
-batch_size = len(traning_data)
+batch_size = 100
+# 10s per batch
+num_iteration = batch_size * 4320
+data_size = len(traning_data)
 
 try:
-    for epoch in range(num_epochs):
+    for iteration in range(num_iteration):
         correct = 0
         total = 0
         loss_total = 0
@@ -58,14 +61,19 @@ try:
             correct += 1 if predicted == actual else 0
             loss_total += loss.item()
 
-            if (i + 1) % batch_size == 0:
-                print ('Epoch [{} / {}], Step [{} / {}], Loss: {:.4f}, Accuracy: {:.2f}%'.format(epoch + 1, num_epochs, i + 1, total_step, loss_total / batch_size, 100 * correct / total))
-                correct = 0
-                total = 0
-                loss_total = 0
+        # show training info
+        print ('Iteration [{} / {}], Step [{} / {}], Loss: {:.4f}, Accuracy: {:.2f}%'.format(iteration + 1, num_iteration, i + 1, total_step, loss_total / data_size, 100 * correct / total))
+        correct = 0
+        total = 0
+        loss_total = 0
+        
+        # Save the model checkpoint
+        torch.save(model.state_dict(), 'model.ckpt')
 
-                # Save the model checkpoint
-                torch.save(model.state_dict(), 'model.ckpt')
+        if iteration % batch_size == 0:
+            # update training data
+            print("=== Batch {} ===".format(int(iteration / batch_size)))
+            train_loader = DataLoader(TrainDataset(data_percentage))
 
 except KeyboardInterrupt:
     print("Saving current model...")

@@ -23,7 +23,7 @@ def PAZULoss(output, target):
 
 # setup the model
 model = PazuLove(board_size + 2, 16, 8, 1)
-data_percentage = 0.01
+data_percentage = 0.5
 traning_data = TrainDataset(data_percentage)
 train_loader = DataLoader(traning_data, shuffle=True)
 criterion = nn.L1Loss()
@@ -35,9 +35,9 @@ model.eval()
 
 # train the model
 total_step = len(train_loader)
-batch_size = 100
+batch_size = 20
 # 10s per batch
-num_iteration = batch_size * 4320
+num_iteration = batch_size * 1000
 data_size = len(traning_data)
 
 try:

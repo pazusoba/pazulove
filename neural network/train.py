@@ -15,22 +15,23 @@ start_time = time.time()
 board_size = 30
 
 num_epochs = 10000
-learning_rate = 0.00001
+learning_rate = 0.0001
+weight_decey = 0.0001
 
 def PAZULoss(output, target):
-    loss = torch.mean((output / 1000 - target / 1000) ** 2)
+    loss = torch.abs((output - target))
     return loss
 
 # setup the model
-model = PazuLove(board_size + 2, 16, 16, 1)
+model = PazuLove(board_size + 2, 16, 8, 1)
 traning_data = TrainDataset(0.1)
 train_loader = DataLoader(traning_data, shuffle=True)
 criterion = nn.L1Loss()
-optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9)
-# optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
+optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.3, weight_decay=weight_decey)
+# optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=weight_decey)
 
-model.load_state_dict(torch.load("model.ckpt"))
-model.eval()
+# model.load_state_dict(torch.load("model.ckpt"))
+# model.eval()
 
 # train the model
 total_step = len(train_loader)
@@ -46,12 +47,12 @@ try:
             prediction = model(data)
             loss = PAZULoss(prediction, output)
 
+            predicted = int(prediction[0][0].item() / 1000)
+            actual = int(output.item() / 1000)
+
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
-
-            predicted = int(prediction[0][0].item() / 1000)
-            actual = int(output.item() / 1000)
             
             total += 1
             correct += 1 if predicted == actual else 0

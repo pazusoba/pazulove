@@ -2,15 +2,14 @@
 Used https://github.com/yunjey/pytorch-tutorial/blob/master/tutorials/01-basics/feedforward_neural_network/main.py#L37-L49 as a base
 """
 
-from torch import nn, tensor
+from torch import nn
 from torch.utils.data import DataLoader
 import torch.multiprocessing as mp
 from pazulove import PazuLove
-from dataset import TrainDataset, SmallDataSet
+from dataset import TrainDataset
 import torch
 import os, sys
 import time
-import math
 
 start_time = time.time()
 board_size = 30
@@ -24,11 +23,11 @@ def PAZULoss(output, target):
 
 # setup the model
 model = PazuLove(board_size + 2, 16, 16, 1)
-traning_data = TrainDataset()
+traning_data = TrainDataset(0.1)
 train_loader = DataLoader(traning_data, shuffle=True)
 criterion = nn.L1Loss()
-# optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9)
-optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
+optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9)
+# optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 
 model.load_state_dict(torch.load("model.ckpt"))
 model.eval()

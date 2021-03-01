@@ -34,8 +34,8 @@ class TestDataset(BaseDataset):
     """
     loaded from data_test.csv
     """
-    def __init__(self):
-        super().__init__("data/data_test.csv")
+    def __init__(self, max_size=0):
+        super().__init__("data/data_test.csv", max_size)
 
 class SmallDataSet(BaseDataset):
     """

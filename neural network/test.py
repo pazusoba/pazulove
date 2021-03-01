@@ -1,6 +1,6 @@
 from pazulove import PazuLove
 from torch.utils.data import DataLoader
-from dataset import TestDataset, SmallDataSet, TrainDataset
+from dataset import TestDataset, TrainDataset
 import torch
 
 model = PazuLove(32, 16, 16, 1)

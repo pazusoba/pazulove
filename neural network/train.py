@@ -27,7 +27,7 @@ model = PazuLove(board_size + 2, 16, 8, 1)
 traning_data = TrainDataset(0.1)
 train_loader = DataLoader(traning_data, shuffle=True)
 criterion = nn.L1Loss()
-optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.3, weight_decay=weight_decey)
+optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.2)
 # optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=weight_decey)
 
 # model.load_state_dict(torch.load("model.ckpt"))

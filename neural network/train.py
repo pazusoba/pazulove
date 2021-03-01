@@ -4,6 +4,7 @@ Used https://github.com/yunjey/pytorch-tutorial/blob/master/tutorials/01-basics/
 
 from torch import nn, tensor
 from torch.utils.data import DataLoader
+import torch.multiprocessing as mp
 from pazulove import PazuLove
 from dataset import TrainDataset, SmallDataSet
 import torch
@@ -15,26 +16,26 @@ start_time = time.time()
 board_size = 30
 
 num_epochs = 10000
-learning_rate = 0.001
+learning_rate = 0.00001
 
 def PAZULoss(output, target):
     loss = torch.mean((output / 1000 - target / 1000) ** 2)
     return loss
 
 # setup the model
-model = PazuLove(board_size + 2, 20, 10, 1)
+model = PazuLove(board_size + 2, 16, 16, 1)
 traning_data = TrainDataset()
 train_loader = DataLoader(traning_data, shuffle=True)
 criterion = nn.L1Loss()
-optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9)
-# optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
+# optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9)
+optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 
-model.load_state_dict(torch.load("model31.ckpt"))
+model.load_state_dict(torch.load("model.ckpt"))
 model.eval()
 
 # train the model
 total_step = len(train_loader)
-batch_size = len(traning_data) / 10
+batch_size = len(traning_data)
 
 try:
     for epoch in range(num_epochs):

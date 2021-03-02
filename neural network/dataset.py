@@ -18,7 +18,7 @@ class BaseDataset(Dataset):
     def __getitem__(self, index):
         curr = self.data.iloc[index].values
         # convert to tensor and float type
-        return (torch.tensor(curr[:-1], dtype=torch.float), torch.tensor(curr[-1], dtype=torch.float))
+        return (torch.tensor(curr[:-1], dtype=torch.float, requires_grad=True), torch.tensor(curr[-1], dtype=torch.float))
 
     def __iter__(self):
         return self.iterator
@@ -37,7 +37,7 @@ class TestDataset(BaseDataset):
     def __init__(self, max_size=0):
         super().__init__("data/data_test.csv", max_size)
 
-class SmallDataSet(BaseDataset):
+class SmallDataset(BaseDataset):
     """
     loaded from data_small.csv
     """

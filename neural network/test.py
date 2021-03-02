@@ -1,9 +1,9 @@
 from pazulove import PazuLove
 from torch.utils.data import DataLoader
-from dataset import TestDataset, TrainDataset
+from dataset import TestDataset, TrainDataset, SmallDataset
 import torch
 
-model = PazuLove(32, 16, 8, 1)
+model = PazuLove(32, 42, 8, 1)
 model.load_state_dict(torch.load("model.ckpt"))
 model.eval()
 

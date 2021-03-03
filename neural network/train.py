@@ -35,9 +35,9 @@ model.eval()
 
 # train the model
 total_step = len(train_loader)
-batch_size = 20
+batch_size = 10
 # 10s per batch
-num_iteration = batch_size * 1000
+num_iteration = batch_size * 10000
 data_size = len(traning_data)
 
 try:

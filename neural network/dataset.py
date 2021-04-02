@@ -4,7 +4,7 @@ import torch
 
 class BaseDataset(Dataset):
     def __init__(self, csv_file, max_size=0):
-        csv_data = pd.read_csv("../{}".format(csv_file))
+        csv_data = pd.read_csv("{}".format(csv_file))
         if max_size <= 0:
             # use everything
             self.data = csv_data

@@ -23,6 +23,10 @@ device = torch.device("cpu")
 if torch.cuda.is_available():
     print('Using CUDA')
     device = torch.device("cuda:0")
+if (os.path.exists("model.ckpt")):
+    print('Loading existing model')
+    model.load_state_dict(torch.load("model.ckpt"))
+    model.eval()
 model.to(device)
 
 def PAZULoss(output, target):
@@ -41,14 +45,11 @@ criterion = nn.L1Loss()
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.5)
 # optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=weight_decey)
 
-# model.load_state_dict(torch.load("model.ckpt"))
-# model.eval()
-
 # train the model
 total_step = len(train_loader)
 batch_size = 1000
 # 10s per batch
-num_iteration = 10
+num_iteration = 20
 data_size = len(traning_data)
 
 try:

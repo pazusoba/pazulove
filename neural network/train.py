@@ -17,6 +17,14 @@ board_size = 30
 learning_rate = 0.00001
 weight_decey = 0.0001
 
+# setup the model
+model = PazuLove(board_size + 2, 42, 8, 1)
+device = torch.device("cpu")
+if torch.cuda.is_available():
+    print('Using CUDA')
+    device = torch.device("cuda:0")
+model.to(device)
+
 def PAZULoss(output, target):
     # if (int(output.item() / 1000) == int(target.item() / 1000)):
     #     # treat them as same score so zero loss
@@ -26,14 +34,7 @@ def PAZULoss(output, target):
     loss = torch.abs(output - target)
     return loss
 
-# setup the model
-model = PazuLove(board_size + 2, 42, 8, 1)
-device = torch.device("cpu")
-if torch.cuda.is_available():
-    device = torch.device("cuda:0")
-model.to(device)
-
-data_percentage = 0.1
+data_percentage = 1
 traning_data = TrainDataset(data_percentage)
 train_loader = DataLoader(traning_data, shuffle=True)
 criterion = nn.L1Loss()
@@ -47,7 +48,7 @@ optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.5)
 total_step = len(train_loader)
 batch_size = 1000
 # 10s per batch
-num_iteration = batch_size * 10
+num_iteration = 10
 data_size = len(traning_data)
 
 try:
@@ -57,11 +58,13 @@ try:
         loss_total = 0
 
         for i, (data, output) in enumerate(train_loader):
-            prediction = model(data.to(device))
+            prediction = model(data)
             loss = PAZULoss(prediction, output)
 
-            predicted = int(prediction[0][0].item() / 1000)
-            actual = int(output.item() / 1000)
+            # predicted = int(prediction[0][0].item() / 1000)
+            # actual = int(output.item() / 1000)
+            predicted = 0
+            actual = 1
 
             optimizer.zero_grad()
             loss.backward()
@@ -69,10 +72,9 @@ try:
             
             total += 1
             correct += 1 if predicted == actual else 0
-            loss_total += loss.item()
-
-        # show training info
-        print ('Iteration [{} / {}], Step [{} / {}], Loss: {:.4f}, Accuracy: {:.2f}%'.format(iteration + 1, num_iteration, i + 1, total_step, loss_total / data_size, 100 * correct / total))
+            loss_total += 0
+            # show training info
+            print ('Iteration [{} / {}], Step [{} / {}], Loss: {}'.format(iteration + 1, num_iteration, i + 1, total_step, loss))
         correct = 0
         total = 0
         loss_total = 0

@@ -4,7 +4,7 @@ import torch
 
 class BaseDataset(Dataset):
     def __init__(self, csv_file, max_size=0):
-        csv_data = pd.read_csv("{}".format(csv_file))
+        csv_data = pd.read_csv("../{}".format(csv_file))
         if max_size <= 0:
             # use everything
             self.data = csv_data
@@ -12,13 +12,19 @@ class BaseDataset(Dataset):
             self.data = csv_data.sample(frac = max_size) 
         self.iterator = iter(self[x] for x in range(len(self)))
 
+        # decide which device the data should be loaded to
+        self.device = torch.device("cpu")
+        if torch.cuda.is_available():
+            self.device = torch.device("cuda:0")
+
     def __len__(self):
         return len(self.data)
 
     def __getitem__(self, index):
         curr = self.data.iloc[index].values
         # convert to tensor and float type
-        return (torch.tensor(curr[:-1], dtype=torch.float, requires_grad=True), torch.tensor(curr[-1], dtype=torch.float))
+        return (torch.tensor(curr[:-1], dtype=torch.float, requires_grad=True).to(self.device),
+                torch.tensor(curr[-1], dtype=torch.float).to(self.device))
 
     def __iter__(self):
         return self.iterator

@@ -18,17 +18,22 @@ learning_rate = 0.00001
 weight_decey = 0.0001
 
 def PAZULoss(output, target):
-    if (int(output.item() / 1000) == int(target.item() / 1000)):
-        # treat them as same score so zero loss
-        loss = torch.abs(output - output)
-        return loss
-    else:
-        loss = torch.abs(output - target)
-        return loss
+    # if (int(output.item() / 1000) == int(target.item() / 1000)):
+    #     # treat them as same score so zero loss
+    #     loss = torch.abs(output - output)
+    #     return loss
+    # else:
+    loss = torch.abs(output - target)
+    return loss
 
 # setup the model
 model = PazuLove(board_size + 2, 42, 8, 1)
-data_percentage = 0.001
+device = torch.device("cpu")
+if torch.cuda.is_available():
+    device = torch.device("cuda:0")
+model.to(device)
+
+data_percentage = 0.1
 traning_data = TrainDataset(data_percentage)
 train_loader = DataLoader(traning_data, shuffle=True)
 criterion = nn.L1Loss()
@@ -40,7 +45,7 @@ optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.5)
 
 # train the model
 total_step = len(train_loader)
-batch_size = 10000
+batch_size = 1000
 # 10s per batch
 num_iteration = batch_size * 10
 data_size = len(traning_data)
@@ -52,7 +57,7 @@ try:
         loss_total = 0
 
         for i, (data, output) in enumerate(train_loader):
-            prediction = model(data)
+            prediction = model(data.to(device))
             loss = PAZULoss(prediction, output)
 
             predicted = int(prediction[0][0].item() / 1000)

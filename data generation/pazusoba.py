@@ -21,25 +21,6 @@ class Location:
         self.board_size = board_size
         self.location = self._get_location()
 
-    def get_random_previous_location(self):
-        """
-        move up, down, left or right one step. 4% chance to be -1 which means this is the first move
-        """
-
-        new_location = Location(-1, self.board_size)
-        if randint(0, 99) < 4:
-            return new_location
-        else:
-            d = list(range(0, 4))
-            while len(d) > 0:
-                pick = choice(d)
-                d.remove(pick)
-
-                new_location = self.move(pick)
-                if new_location != None:
-                    break
-            return new_location
-
     def get_index(self):
         return self.index
 
@@ -97,7 +78,7 @@ class Pazusoba:
     A basic port of pazusoba specialised in looking certain steps ahead
     """
 
-    OUTPUT_TABLE = ["", "R", "B", "G", "L", "D", "H", "J", "P", "", "", "", ""]
+    OUTPUT_TABLE = ["R", "B", "G", "L", "D", "H", "J", "P", "", "", "", ""]
 
     count = 0
     board_size = 0
@@ -118,9 +99,10 @@ class Pazusoba:
         # with open("temp.txt", "a") as csv:
             for i in range(0, self.count):
                 new_board = ""
-                orbs = list(range(1, 7))
+                orbs = list(range(0, 6))
 
                 # 50% chance to get a board with less orbs
+                # NOTE: this might be a problem because it might be too different for machine learning
                 if randint(0, 1) == 0:
                     number_of_orbs = randint(2, 5)
                     while len(orbs) > number_of_orbs:
@@ -129,10 +111,6 @@ class Pazusoba:
                 for j in range(0, self.board_size):
                     orb = choice(orbs)
                     new_board += "{}{}".format(orb, "," if j < self.board_size - 1 else "")
-                
-                # pick random locations
-                curr_location = Location(randint(0, self.board_size - 1), self.board_size)
-                prev_location = curr_location.get_random_previous_location()
                 
                 orb_list = self._convert_board_to_list(new_board)
                 # self._print_with_process("No.{} - {}\nPrev - {}, Curr - {}".format(i, self._pretty_board(new_board), prev_location.get_index(), curr_location.get_index()))

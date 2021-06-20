@@ -8,3 +8,6 @@ There are now 20000 entries. Some might be in correct before line 1744. It has 5
 
 ## Small
 A very small dataset with 30 entries.
+
+# Refactor
+This is a simple script to update from old format. It contains prev, next and score. Now, prev and next are removed and score becomes combo.

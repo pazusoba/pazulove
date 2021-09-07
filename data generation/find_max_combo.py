@@ -23,10 +23,10 @@ if __name__ == '__main__':
     # "RHLBDGPRHDRJPJRHHJGRDRHLGLPHBB"
     if len(sys.argv) > 1:
         board = sys.argv[1]
-        step = 10
+        step = 5
         if len(sys.argv) > 2:
             step = int(sys.argv[2])
 
         combo = findMaxCombo(board, step)
-        print("{} - {}".format(board, combo))
-    print(time.time() - start)
+        print("{} - {} combo in {} step".format(board, combo, step))
+    # print(time.time() - start)

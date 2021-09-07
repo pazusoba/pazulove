@@ -5,6 +5,9 @@ temp*.txt
 # vscode
 .vscode
 
+# virtual machine
+.env/
+
 # cmake
 build/
 **/*.so

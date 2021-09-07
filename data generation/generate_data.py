@@ -8,7 +8,7 @@ from pazulove import PazuLove
 import traceback, os, time
 
 cpu_count = os.cpu_count()
-data_count = int(ceil(100 / cpu_count))
+data_count = int(ceil(1800 / cpu_count))
 
 def generate_data(process_number):
     try:

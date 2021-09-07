@@ -27,7 +27,6 @@ if __name__ == '__main__':
         if len(sys.argv) > 2:
             step = int(sys.argv[2])
 
-        print("Board is ".format(board))
         combo = findMaxCombo(board, step)
         print("{} - {}".format(board, combo))
     print(time.time() - start)

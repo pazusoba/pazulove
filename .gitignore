@@ -4,3 +4,9 @@ temp*.txt
 
 # vscode
 .vscode
+
+# cmake
+build/
+**/*.so
+**/*.exe
+**/*.dylib

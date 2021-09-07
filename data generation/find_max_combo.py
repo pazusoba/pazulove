@@ -16,8 +16,7 @@ libpazusoba.findMaxCombo.argtypes = (c_char_p, c_uint)
 
 def findMaxCombo(board: str, step: int) -> int:
     # convert to c string
-    c_board = c_char_p(board.encode('ascii'))
-    return libpazusoba.findMaxCombo(c_board, step)
+    return libpazusoba.findMaxCombo(board.encode('utf-8'), step)
 
 if __name__ == '__main__':
     combo = findMaxCombo("RHLBDGPRHDRJPJRHHJGRDRHLGLPHBB", 10)

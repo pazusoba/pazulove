@@ -14,4 +14,5 @@ set_target_properties(
     OUTPUT_NAME "pazulove"
     SUFFIX ".so"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/data\ generation"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/data\ generation"
 )

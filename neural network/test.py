@@ -3,7 +3,7 @@ from torch.utils.data import DataLoader
 from dataset import TestDataset, TrainDataset, SmallDataset
 import torch
 
-model = PazuLove(32, 42, 8, 1)
+model = PazuLove(30, 8, 8, 1)
 model.load_state_dict(torch.load("model.ckpt"))
 model.eval()
 
@@ -17,7 +17,8 @@ with torch.no_grad():
     for (data, output) in test_loader:
         prediction = model(data)
         predicted, actual = prediction[0][0].item(), output.item()
-        predicted_combo, actual_combo = int(predicted / 1000), int(actual / 1000)
+        predicted_combo, actual_combo = int(
+            round(predicted)), int(round(actual))
 
         print("Predicted - {:.1f}, Actual - {}".format(predicted, actual))
 

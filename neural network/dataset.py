@@ -2,6 +2,7 @@ from torch.utils.data import Dataset, DataLoader
 import pandas as pd
 import torch
 
+
 class BaseDataset(Dataset):
     def __init__(self, csv_file, max_size=0):
         csv_data = pd.read_csv("../{}".format(csv_file))
@@ -9,7 +10,7 @@ class BaseDataset(Dataset):
             # use everything
             self.data = csv_data
         else:
-            self.data = csv_data.sample(frac = max_size) 
+            self.data = csv_data.sample(frac=max_size)
         self.iterator = iter(self[x] for x in range(len(self)))
 
     def __len__(self):
@@ -23,26 +24,32 @@ class BaseDataset(Dataset):
     def __iter__(self):
         return self.iterator
 
+
 class TrainDataset(BaseDataset):
     """
-    loaded from data_random.csv
+    loaded from data8_random.csv
     """
+
     def __init__(self, max_size=0):
-        super().__init__("data/data_random.csv", max_size)
+        super().__init__("data/data8_random.csv", max_size)
+
 
 class TestDataset(BaseDataset):
     """
-    loaded from data_test.csv
+    loaded from data8_test.csv
     """
+
     def __init__(self, max_size=0):
-        super().__init__("data/data_test.csv", max_size)
+        super().__init__("data/data8_test.csv", max_size)
+
 
 class SmallDataset(BaseDataset):
     """
-    loaded from data_small.csv
+    loaded from data8_small.csv
     """
+
     def __init__(self):
-         super().__init__("data/data_small.csv")
+        super().__init__("data/data8_small.csv")
 
 # test
 # train = TestDataset()

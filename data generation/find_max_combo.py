@@ -2,8 +2,8 @@
 Call methods exported in the shared library
 """
 from ctypes import *
-from typing import List
-import os
+import os, sys
+import time
 
 LIBRARY = "libpazulove.so"
 if not os.path.exists(LIBRARY):
@@ -19,5 +19,15 @@ def findMaxCombo(board: str, step: int) -> int:
     return libpazusoba.findMaxCombo(board.encode('utf-8'), step)
 
 if __name__ == '__main__':
-    combo = findMaxCombo("RHLBDGPRHDRJPJRHHJGRDRHLGLPHBB", 10)
-    print("Max combo is {}\n".format(combo))
+    start = time.time()
+    # "RHLBDGPRHDRJPJRHHJGRDRHLGLPHBB"
+    if len(sys.argv) > 1:
+        board = sys.argv[1]
+        step = 10
+        if len(sys.argv) > 2:
+            step = int(sys.argv[2])
+
+        print("Board is ".format(board))
+        combo = findMaxCombo(board, step)
+        print("{} - {}".format(board, combo))
+    print(time.time() - start)

@@ -1,0 +1,3 @@
+[submodule "pazusoba"]
+	path = pazusoba
+	url = git@github.com:HenryQuan/pazusoba.git

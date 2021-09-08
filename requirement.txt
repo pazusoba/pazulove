@@ -1,5 +1,2 @@
-torch
-torchvision
-Pillow
-pandas
+tensorflow
 autopep8

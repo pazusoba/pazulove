@@ -18,7 +18,7 @@ class PazuLove:
         self.count = count
 
     def generate_new_data(self):
-        with open("../data/data{}.csv".format(self.step), "a") as csv:
+        with open("../data/data{}_random.csv".format(self.step), "a") as csv:
             for i in range(self.count):
                 output = ""
                 board = ""

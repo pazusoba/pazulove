@@ -9,10 +9,11 @@ project(
 
 add_subdirectory(pazusoba EXCLUDE_FROM_ALL)
 set_target_properties(
-    pazuauto
+    pazusoba
     PROPERTIES
     OUTPUT_NAME "pazulove"
     SUFFIX ".so"
+    # Both are needed for both Mac OS and Windows
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/data\ generation"
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/data\ generation"
 )

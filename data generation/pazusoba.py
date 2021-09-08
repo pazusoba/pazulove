@@ -7,6 +7,7 @@ BOARD_INFO = {
     42: [7, 6]
 }
 
+
 class Location:
     """
     A wrapper for index to easily convert between index and location
@@ -92,6 +93,7 @@ class Location:
         """
         return BOARD_INFO[self.board_size][0]
 
+
 class Pazusoba:
     """
     A basic port of pazusoba specialised in looking certain steps ahead
@@ -115,7 +117,7 @@ class Pazusoba:
         """
 
         with open("data/data.csv", "a") as csv:
-        # with open("temp.txt", "a") as csv:
+            # with open("temp.txt", "a") as csv:
             for i in range(0, self.count):
                 new_board = ""
                 orbs = list(range(1, 7))
@@ -128,18 +130,23 @@ class Pazusoba:
 
                 for j in range(0, self.board_size):
                     orb = choice(orbs)
-                    new_board += "{}{}".format(orb, "," if j < self.board_size - 1 else "")
-                
+                    new_board += "{}{}".format(orb, "," if j <
+                                               self.board_size - 1 else "")
+
                 # pick random locations
-                curr_location = Location(randint(0, self.board_size - 1), self.board_size)
+                curr_location = Location(
+                    randint(0, self.board_size - 1), self.board_size)
                 prev_location = curr_location.get_random_previous_location()
-                
+
                 orb_list = self._convert_board_to_list(new_board)
                 # self._print_with_process("No.{} - {}\nPrev - {}, Curr - {}".format(i, self._pretty_board(new_board), prev_location.get_index(), curr_location.get_index()))
-                best_score, best_board = self._look_ahead(orb_list, prev_location, curr_location)
+                best_score, best_board = self._look_ahead(
+                    orb_list, prev_location, curr_location)
                 # print out some info, how many percent
-                print("{}({}%) - {} {}".format(i + 1, round((i + 1)/ self.count * 100), best_score, self._pretty_board(best_board)))
-                csv.write("{},{},{},{}\n".format(new_board, prev_location.get_index(), curr_location.get_index(), best_score))
+                print("{}({}%) - {} {}".format(i + 1, round((i + 1) /
+                      self.count * 100), best_score, self._pretty_board(best_board)))
+                csv.write("{},{},{},{}\n".format(
+                    new_board, prev_location.get_index(), curr_location.get_index(), best_score))
 
     def _convert_board_to_list(self, board):
         return [int(x) for x in board.replace(" ", "").split(",")]
@@ -155,7 +162,7 @@ class Pazusoba:
         # move around
         for i in range(0, 4):
             next_loc = curr.move(i)
-            
+
             # prevent invalid moves and going backward
             if next_loc == None or next_loc.get_index() == prev.get_index():
                 continue
@@ -164,7 +171,8 @@ class Pazusoba:
             new_board = self._swap(board, curr, next_loc)
 
             # get the best score
-            new_score, new_board = self._look_ahead(new_board, curr, next_loc, step - 1)
+            new_score, new_board = self._look_ahead(
+                new_board, curr, next_loc, step - 1)
             if new_score > score:
                 score = new_score
                 best_board = new_board
@@ -190,7 +198,7 @@ class Pazusoba:
                 # from left to right
                 for j in range(0, column):
                     curr_orb = board_2d[i][j]
-                    
+
                     # ignore empty orbs
                     if curr_orb == 0:
                         continue
@@ -250,7 +258,7 @@ class Pazusoba:
 
                 if board[cx][cy] != orb and not (cx, cy) in visited:
                     break
-                    
+
                 d_list[d] += 1
                 count += 1
 
@@ -264,7 +272,7 @@ class Pazusoba:
 
             if h_count == 3 and v_count == 3:
                 horizontal = vertical = True
-            
+
             if not horizontal:
                 start = 1
             if not vertical:
@@ -297,15 +305,19 @@ class Pazusoba:
                         cy += i
                     elif d == 1:
                         cx += i
-                    
+
                     loc = (cx, cy)
                     if loc in visited and visited[loc] < 2:
                         if d == 0:
-                            self._erase_combo(board, cx + 1, cy, orb, combo_list, visited)
-                            self._erase_combo(board, cx - 1, cy, orb, combo_list, visited)
+                            self._erase_combo(
+                                board, cx + 1, cy, orb, combo_list, visited)
+                            self._erase_combo(
+                                board, cx - 1, cy, orb, combo_list, visited)
                         else:
-                            self._erase_combo(board, cx, cy + 1, orb, combo_list, visited)
-                            self._erase_combo(board, cx, cy - 1, orb, combo_list, visited)
+                            self._erase_combo(
+                                board, cx, cy + 1, orb, combo_list, visited)
+                            self._erase_combo(
+                                board, cx, cy - 1, orb, combo_list, visited)
 
     def _has_same_orb(self, board, orb, x, y):
         if self._valid_location(board, x, y):
@@ -374,7 +386,8 @@ class Pazusoba:
     def _swap(self, board, first, second):
         # copy the board, swap two location
         new_board = board[:]
-        new_board[first.get_index()], new_board[second.get_index()] = new_board[second.get_index()], new_board[first.get_index()]
+        new_board[first.get_index()], new_board[second.get_index(
+        )] = new_board[second.get_index()], new_board[first.get_index()]
         return new_board
 
     def _pretty_board(self, board):

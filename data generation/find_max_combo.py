@@ -2,7 +2,8 @@
 Call methods exported in the shared library
 """
 from ctypes import *
-import os, sys
+import os
+import sys
 import time
 
 LIBRARY = "libpazulove.so"
@@ -17,6 +18,7 @@ libpazusoba.findMaxCombo.argtypes = (c_char_p, c_uint)
 def findMaxCombo(board: str, step: int) -> int:
     # convert to c string
     return libpazusoba.findMaxCombo(board.encode('utf-8'), step)
+
 
 if __name__ == '__main__':
     start = time.time()

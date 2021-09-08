@@ -1,6 +1,6 @@
 import sys
 
-ORBS = ["R", "B" ,"G", "L", "D", "H", "J", "P"]
+ORBS = ["R", "B", "G", "L", "D", "H", "J", "P"]
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:

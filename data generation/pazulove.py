@@ -5,8 +5,9 @@ Generate data for machine learning
 import random
 from find_max_combo import findMaxCombo
 
-ORBS = ["R", "B" ,"G", "L", "D", "H"]
+ORBS = ["R", "B", "G", "L", "D", "H"]
 EXTRA_ORBS = ["P", "J"]
+
 
 class PazuLove:
     def __init__(self, size, step, process, count):
@@ -25,8 +26,7 @@ class PazuLove:
                 for i in range(self.size):
                     orb = random.choice(ORBS)
                     board += orb
-                    output += str(ORBS.index(orb)) + ","                   
+                    output += str(ORBS.index(orb)) + ","
                 combo = findMaxCombo(board, self.step)
                 output += str(combo) + "\n"
                 csv.write(output)
-            

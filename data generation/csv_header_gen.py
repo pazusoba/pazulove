@@ -4,6 +4,7 @@ Generate the header for csv
 
 count = 30
 
-for i in range(0, count):
-    print("orb{},".format(i), end="")
-print("combo\n")
+if __name__ == '__main__':
+    for i in range(0, count):
+        print("orb{},".format(i), end="")
+    print("combo\n")

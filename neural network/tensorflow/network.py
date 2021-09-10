@@ -24,7 +24,7 @@ model.summary()
 # Load data from csv
 csv_name = "data8_normal.csv"
 full_data = pd.read_csv("../../data/{}".format(csv_name))
-partial_data = full_data.sample(frac=0.2)
+partial_data = full_data.sample(frac=0.4)
 
 # %%
 # take the first 80% as training data
@@ -51,7 +51,7 @@ test_y = test_y.astype("float32")
 
 # build the model
 model.compile(
-    optimizer=keras.optimizers.RMSprop(),
+    optimizer=keras.optimizers.RMSprop(lr=0.00001),
     loss=keras.losses.SparseCategoricalCrossentropy(),
     metrics=[keras.metrics.SparseCategoricalAccuracy()],
 )
@@ -62,7 +62,7 @@ history = model.fit(
     train_x,
     train_y,
     epochs=500,
-    # validation_data=(x_val, y_val),
+    validation_data=(test_x, test_y),
 )
 
 # %%
@@ -82,3 +82,5 @@ all_x = full_data.drop(columns=["combo"])
 all_y = full_data["combo"]
 results = model.evaluate(all_x, all_y)
 print("test loss, test acc:", results)
+
+# %%

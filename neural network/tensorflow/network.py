@@ -24,7 +24,8 @@ model.summary()
 # Load data from csv
 csv_name = "data8_normal.csv"
 full_data = pd.read_csv("../../data/{}".format(csv_name))
-partial_data = full_data.sample(frac=0.4)
+partial_data = full_data.sample(frac=0.02)
+print("Using {} data".format(partial_data.shape))
 
 # %%
 # take the first 80% as training data
@@ -51,7 +52,7 @@ test_y = test_y.astype("float32")
 
 # build the model
 model.compile(
-    optimizer=keras.optimizers.RMSprop(lr=0.00001),
+    optimizer=keras.optimizers.RMSprop(lr=0.0001),
     loss=keras.losses.SparseCategoricalCrossentropy(),
     metrics=[keras.metrics.SparseCategoricalAccuracy()],
 )

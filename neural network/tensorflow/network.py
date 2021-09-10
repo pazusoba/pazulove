@@ -7,22 +7,24 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 import pandas as pd
+import numpy as np
 
 # %%
 # Define the model
 model = keras.Sequential(name="pazulove")
 model.add(keras.Input(shape=(30,)))  # 6 x 5 boards
-model.add(layers.Dense(10, activation="relu", name="layer1"))
+model.add(layers.Dense(120, activation="relu", name="layer1"))
 model.add(layers.Dense(10, activation="relu", name="layer2"))
-# 0 - 11
-model.add(layers.Dense(11, activation="softmax", name="predictions"))
+# 0 - 10 are all possible outputs
+# for now, we only have 3 - 8 so 6 values
+model.add(layers.Dense(9, activation="softmax", name="predictions"))
 model.summary()
 
 # %%
 # Load data from csv
 csv_name = "data8_normal.csv"
 full_data = pd.read_csv("../../data/{}".format(csv_name))
-partial_data = full_data.sample(frac=0.1)
+partial_data = full_data.sample(frac=0.4)
 
 # %%
 # take the first 80% as training data
@@ -55,19 +57,18 @@ print("Fit model on training data")
 history = model.fit(
     train_x,
     train_y,
-    # batch_size=64,
     epochs=200,
     # validation_data=(x_val, y_val),
 )
 
 # %%
 print("Evaluate on test data")
-results = model.evaluate(test_x, test_y, batch_size=128)
+results = model.evaluate(test_x, test_y)
 print("test loss, test acc:", results)
 
-print("Get predictions for 3 samples")
-predictions = model.predict(test_x[:3])
-print("predictions:", predictions)
-print(test_y[:3])
+predictions = model.predict(test_x[:10])
+# argmax find the max in that array and axis=1 is horizontal index (index in that array)
+print("predictions:", np.argmax(predictions, axis=1))
+print(test_y[:10])
 
 # %%

@@ -1,2 +1,3 @@
 tensorflow
 autopep8
+jupyter

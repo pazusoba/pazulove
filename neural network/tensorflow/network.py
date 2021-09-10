@@ -24,7 +24,7 @@ model.summary()
 # Load data from csv
 csv_name = "data8_normal.csv"
 full_data = pd.read_csv("../../data/{}".format(csv_name))
-partial_data = full_data.sample(frac=0.1)
+partial_data = full_data.sample(frac=0.2)
 
 # %%
 # take the first 80% as training data
@@ -46,8 +46,8 @@ test_x = test_x.astype("float32")
 test_x = test_x / 5.0
 
 # update output to float
-# train_y = train_y.astype("float32")
-# test_y = test_y.astype("float32")
+train_y = train_y.astype("float32")
+test_y = test_y.astype("float32")
 
 # build the model
 model.compile(
@@ -61,7 +61,7 @@ print("Fit model on training data")
 history = model.fit(
     train_x,
     train_y,
-    epochs=200,
+    epochs=500,
     # validation_data=(x_val, y_val),
 )
 
@@ -77,3 +77,8 @@ print("predictions:", predictions)
 print(test_y[:10])
 
 # %%
+print("Test overall performance")
+all_x = full_data.drop(columns=["combo"])
+all_y = full_data["combo"]
+results = model.evaluate(all_x, all_y)
+print("test loss, test acc:", results)

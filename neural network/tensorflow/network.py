@@ -14,7 +14,9 @@ import numpy as np
 model = keras.Sequential(name="pazulove")
 model.add(keras.Input(shape=(30,)))  # 6 x 5 boards
 model.add(layers.Dense(89, activation="relu", name="layer1"))
-model.add(layers.Dense(30, activation="relu", name="layer2"))
+model.add(layers.Dense(89, activation="relu", name="layer2"))
+model.add(layers.Dense(89, activation="relu", name="layer3"))
+# model.add(layers.Dense(30, activation="relu", name="layer2"))
 # 0 - 10 are all possible outputs
 # for now, we only have 3 - 8 so 6 values
 model.add(layers.Dense(9, activation="softmax", name="predictions"))
@@ -26,7 +28,7 @@ csv_name = "data8_normal.csv"
 full_data = pd.read_csv("../../data/{}".format(csv_name))
 # shuffle the data
 full_data = full_data.sample(frac=1)
-partial_data = full_data.sample(frac=0.5)
+partial_data = full_data.sample(frac=1)
 print("Using {} data".format(partial_data.shape))
 
 # %%
@@ -54,7 +56,7 @@ test_y = test_y.astype("float32")
 
 # build the model
 model.compile(
-    optimizer=keras.optimizers.Adam(lr=0.0001),
+    optimizer=keras.optimizers.Adam(learning_rate=0.0001),
     loss=keras.losses.SparseCategoricalCrossentropy(),
     metrics=[keras.metrics.SparseCategoricalAccuracy()],
 )
@@ -64,7 +66,7 @@ print("Fit model on training data")
 history = model.fit(
     train_x,
     train_y,
-    epochs=1000,
+    epochs=100,
     validation_data=(test_x, test_y),
 )
 

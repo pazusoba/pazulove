@@ -10,7 +10,7 @@ import os
 import time
 
 cpu_count = os.cpu_count()
-data_count = int(ceil(155 / cpu_count))
+data_count = int(ceil(80000 / cpu_count))
 
 
 def generate_data(process_number):

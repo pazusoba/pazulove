@@ -1,3 +1,4 @@
 tensorflow
 jupyter
 autopep8
+matplotlib

@@ -3,6 +3,7 @@ Predict the max combo in 8 steps
 """
 
 # %%
+import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
@@ -28,7 +29,7 @@ csv_name = "data8_normal.csv"
 full_data = pd.read_csv("../../data/{}".format(csv_name))
 # shuffle the data
 full_data = full_data.sample(frac=1)
-partial_data = full_data.sample(frac=1)
+partial_data = full_data.sample(frac=0.5)
 print("Using {} data".format(partial_data.shape))
 
 # %%
@@ -54,6 +55,7 @@ test_x = test_x / 5.0
 train_y = train_y.astype("float32")
 test_y = test_y.astype("float32")
 
+# %%
 # build the model
 model.compile(
     optimizer=keras.optimizers.Adam(learning_rate=0.0001),
@@ -79,16 +81,49 @@ print("Evaluate on train data")
 results = model.evaluate(train_x, train_y)
 print("test loss, test acc:", results)
 
-print("Test overall performance")
-all_x = full_data.drop(columns=["combo"])
-all_y = full_data["combo"]
-results = model.evaluate(all_x, all_y)
-print("test loss, test acc:", results)
+# print("Test overall performance")
+# all_x = full_data.drop(columns=["combo"])
+# all_y = full_data["combo"]
+# results = model.evaluate(all_x, all_y)
+# print("test loss, test acc:", results)
 
 predictions = model.predict(test_x[:10])
 predictions = np.argmax(predictions, axis=1)
 # argmax find the max in that array and axis=1 is horizontal index (index in that array)
 print("predictions:", predictions)
 print(test_y[:10])
+
+# %%
+# ['loss', 'sparse_categorical_accuracy', 'val_loss', 'val_sparse_categorical_accuracy']
+
+# plot the training history
+print(history.history.keys())
+epochs = range(1, len(loss_values)+1)
+
+loss_values = history.history['loss']
+validation_loss_values = history.history['val_loss']
+
+# plot training loss and accuracy
+plt.plot(epochs, loss_values, label='Training Loss')
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.plot(epochs, validation_loss_values, label='Validation Loss')
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.legend()
+plt.show()
+
+# plot validation loss and accuracy
+accuracy_values = history.history['sparse_categorical_accuracy']
+validation_accuracy_values = history.history['val_sparse_categorical_accuracy']
+
+plt.plot(epochs, accuracy_values, label='Training Accuracy')
+plt.xlabel('Epochs')
+plt.ylabel('Accuracy')
+plt.plot(epochs, validation_accuracy_values, label='Validation Accuracy')
+plt.xlabel('Epochs')
+plt.ylabel('Accuracy')
+plt.legend()
+plt.show()
 
 # %%
